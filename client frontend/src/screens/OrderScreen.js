@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link,useLocation } from "react-router-dom";
 import Header from "./../components/Header";
 import { PayPalButton } from "react-paypal-button-v2";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,8 +12,10 @@ import { ORDER_PAY_RESET } from "../Redux/Constants/OrderConstants";
 
 const OrderScreen = ({ match }) => {
   window.scrollTo(0, 0);
+  const pathname = useLocation().pathname;
   const [sdkReady, setSdkReady] = useState(false);
-  const orderId = match.params.id;
+  // const orderId = match.params.id;
+  const orderId = pathname?.split("/")[2];
   const dispatch = useDispatch();
 
   const orderDetails = useSelector((state) => state.orderDetails);
@@ -30,6 +32,9 @@ const OrderScreen = ({ match }) => {
       order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0)
     );
   }
+  useEffect(() => {
+    dispatch(getOrderDetails(orderId));
+  }, [dispatch, orderId]);
 
   useEffect(() => {
     const addPayPalScript = async () => {
@@ -45,7 +50,8 @@ const OrderScreen = ({ match }) => {
     };
     if (!order || successPay) {
       dispatch({ type: ORDER_PAY_RESET });
-      dispatch(getOrderDetails(orderId));
+      // console.log(pathname?.split('/')[2],'ORDER ID')
+      dispatch(getOrderDetails(pathname?.split("/")[2]));
     } else if (!order.isPaid) {
       if (!window.paypal) {
         addPayPalScript();
@@ -53,12 +59,13 @@ const OrderScreen = ({ match }) => {
         setSdkReady(true);
       }
     }
-  }, [dispatch, orderId, successPay, order]);
+  }, [dispatch, pathname, successPay, order]);
 
   const successPaymentHandler = (paymentResult) => {
-    dispatch(payOrder(orderId, paymentResult));
+    dispatch(payOrder(pathname?.split("/")[2], paymentResult));
   };
 
+  console.log(order, "ORDER");
   return (
     <>
       <Header />
