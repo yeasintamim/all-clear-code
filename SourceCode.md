@@ -2,19 +2,19 @@
 
 1.  <!-- Frontend File (Static File) without Backend -->
 
-    # https://github.com/
+    # https://github.com/yeasintamim
 
     <!-- LIVE -->
 
-    # https://frontend-shoeshop.herokuapp.com/
+    # https://yeasin-eshop-customer-ui.netlify.app/
 
 2.  <!-- Admin Dashboard File (Static File) without Backend -->
 
-    # https://github.com/
+    # https://github.com/yeasintamim
 
     <!-- LIVE ADMIN -->
 
-    # https://admin-dashboard-shoeshop.herokuapp.com/
+    # https://yeasin-eshop-admin-ui.netlify.app/
 
 3.  <!-- FULL ADMIN & CLIENT SOURCE CODE -->
 

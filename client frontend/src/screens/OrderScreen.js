@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Header from "./../components/Header";
 import { PayPalButton } from "react-paypal-button-v2";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,15 +9,13 @@ import Message from "./../components/LoadingError/Error";
 import moment from "moment";
 import axios from "axios";
 import { ORDER_PAY_RESET } from "../Redux/Constants/OrderConstants";
-import { URL } from "../Redux/Url";
 
 const OrderScreen = ({ match }) => {
   window.scrollTo(0, 0);
-  const pathname = useLocation().pathname;
   const [sdkReady, setSdkReady] = useState(false);
-  // const orderId = match.params.id;
-  const orderId = pathname?.split("/")[2];
+  const orderId = match.params.id;
   const dispatch = useDispatch();
+
   const orderDetails = useSelector((state) => state.orderDetails);
   const { order, loading, error } = orderDetails;
   const orderPay = useSelector((state) => state.orderPay);
@@ -32,13 +30,10 @@ const OrderScreen = ({ match }) => {
       order.orderItems.reduce((acc, item) => acc + item.price * item.qty, 0)
     );
   }
-  useEffect(() => {
-    dispatch(getOrderDetails(orderId));
-  }, [dispatch, orderId]);
 
   useEffect(() => {
     const addPayPalScript = async () => {
-      const { data: clientId } = await axios.get(`${URL}/api/config/paypal`);
+      const { data: clientId } = await axios.get("/api/config/paypal");
       const script = document.createElement("script");
       script.type = "text/javascript";
       script.src = `https://www.paypal.com/sdk/js?client-id=${clientId}`;
@@ -50,8 +45,7 @@ const OrderScreen = ({ match }) => {
     };
     if (!order || successPay) {
       dispatch({ type: ORDER_PAY_RESET });
-      // console.log(pathname?.split('/')[2],'ORDER ID')
-      dispatch(getOrderDetails(pathname?.split("/")[2]));
+      dispatch(getOrderDetails(orderId));
     } else if (!order.isPaid) {
       if (!window.paypal) {
         addPayPalScript();
@@ -59,13 +53,12 @@ const OrderScreen = ({ match }) => {
         setSdkReady(true);
       }
     }
-  }, [dispatch, pathname, successPay, order]);
+  }, [dispatch, orderId, successPay, order]);
 
   const successPaymentHandler = (paymentResult) => {
-    dispatch(payOrder(pathname?.split("/")[2], paymentResult));
+    dispatch(payOrder(orderId, paymentResult));
   };
 
-  console.log(order, "ORDER");
   return (
     <>
       <Header />

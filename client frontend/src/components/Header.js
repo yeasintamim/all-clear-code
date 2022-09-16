@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../Redux/Actions/userActions";
-import { clearItemsInCart } from "../Redux/Actions/cartActions";
 
 const Header = () => {
   const [keyword, setKeyword] = useState();
@@ -15,7 +14,6 @@ const Header = () => {
   const { userInfo } = userLogin;
 
   const logoutHandler = () => {
-    dispatch(clearItemsInCart());
     dispatch(logout());
   };
 
